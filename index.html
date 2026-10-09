@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Dandelion — Founder</title>
+
+  <meta
+    name="description"
+    content="Dandelion is a founder, product designer and independent software builder based in Beijing."
+  />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,500;1,500&display=swap"
+    rel="stylesheet"
+  />
+
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem("dandelion-theme");
+        if (saved === "dark" || saved === "light") {
+          document.documentElement.setAttribute("data-theme", saved);
+        }
+      } catch (error) {}
+    })();
+  </script>
+
+  <style>
+    :root {
+      --ink: #181818;
+      --muted: #777777;
+      --paper: #f8f6ef;
+      --surface: #ffffff;
+      --nav-bg: rgba(255, 255, 255, 0.82);
+      --hairline: rgba(0, 0, 0, 0.12);
+      --blue: #a9c5ec;
+      --yellow: #f5df79;
+      --red: #a91d18;
+      --green: #174a38;
+      --lime: #ddff85;
+      --pink: #f2c4e9;
+      --purple: #ead1f1;
+      --navy: #19072e;
+      --orange: #f1a46d;
+      --radius: 9px;
+    }
+
+    html[data-theme="dark"] {
+      --ink: #f3f1ea;
+      --muted: #9c9c9c;
+      --surface: #121212;
+      --nav-bg: rgba(18, 18, 18, 0.82);
+      --hairline: rgba(255, 255, 255, 0.16);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--surface);
+      font-family: "DM Sans", sans-serif;
+      font-size: 12px;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    /* ============================================================
+       Starfield canvas — fixed, full-viewport, transparent, behind content.
+    ============================================================ */
+
+    .starfield {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .site {
+      position: relative;
+      z-index: 1;
+      width: min(100% - 28px, 650px);
+      margin: 0 auto;
+      padding: 18px 0 45px;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    :focus-visible {
+      outline: 2px solid #2f6fed;
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+    [hidden] { display: none !important; }
+
+    /* ---------- Header ---------- */
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 62px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 20px;
+      font-weight: 700;
+      font-style: italic;
+      letter-spacing: -1px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .email { color: var(--muted); font-size: 9px; }
+
+    .theme-toggle {
+      display: grid;
+      width: 26px;
+      height: 26px;
+      flex: none;
+      place-items: center;
+      border: 1px solid var(--hairline);
+      border-radius: 50%;
+      color: var(--ink);
+      background: transparent;
+      font-size: 12px;
+      line-height: 1;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .theme-toggle:hover {
+      background: var(--yellow);
+      color: #181818;
+      transform: translateY(-2px);
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      margin-bottom: 52px;
+    }
+
+    .avatar {
+      display: grid;
+      width: 76px;
+      height: 76px;
+      flex: none;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 50%;
+      color: #ffffff;
+      background:
+        radial-gradient(circle at 65% 30%, #f3c77b 0 12%, transparent 13%),
+        linear-gradient(145deg, #27394f, #cf9b85 55%, #27243a);
+      font-family: Georgia, serif;
+      font-size: 29px;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+      transition: transform 0.35s ease;
+    }
+
+    .avatar:hover { transform: rotate(-6deg) scale(1.05); }
+
+    .profile-content h1 { margin: 0 0 4px; font-size: 16px; }
+    .profile-content p { margin: 3px 0; }
+    .muted { color: var(--muted); }
+
+    .location {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    /* ---------- Navigation ---------- */
+
+    .navigation {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 7px;
+      margin: 0 -6px 22px;
+      padding: 8px 6px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(10px);
+      transition: box-shadow 0.25s ease, background-color 0.25s ease;
+    }
+
+    .navigation.is-stuck { box-shadow: 0 1px 0 var(--hairline); }
+
+    .navigation a {
+      padding: 5px 8px;
+      border-radius: 4px;
+      background: rgba(127, 127, 127, 0.14);
+      font-size: 9px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .navigation a:hover,
+    .navigation a.active {
+      color: #111111;
+      background: var(--yellow);
+      transform: translateY(-2px);
+    }
+
+    /* ---------- View switching ---------- */
+
+    .view { animation: view-in 0.35s ease both; }
+
+    @keyframes view-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .view-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .back-link {
+      display: inline-block;
+      padding: 6px 11px;
+      border: 1px solid var(--hairline);
+      border-radius: 20px;
+      font-size: 9px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .back-link:hover {
+      border-color: transparent;
+      color: #181818;
+      background: var(--yellow);
+      transform: translateY(-2px);
+    }
+
+    .view-label {
+      color: var(--muted);
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ---------- Grid ---------- */
+
+    .portfolio-section {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 32px;
+      scroll-margin-top: 70px;
+    }
+
+    /* ---------- Card base + hover + staggered load-in ---------- */
+
+    .card {
+      position: relative;
+      min-height: 122px;
+      padding: 13px;
+      overflow: hidden;
+      border-radius: var(--radius);
+      color: #181818;
+
+      transition: all 0.3s ease;
+
+      animation: card-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes card-in {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card:nth-child(1)  { animation-delay: 0.05s; }
+    .card:nth-child(2)  { animation-delay: 0.10s; }
+    .card:nth-child(3)  { animation-delay: 0.15s; }
+    .card:nth-child(4)  { animation-delay: 0.20s; }
+    .card:nth-child(5)  { animation-delay: 0.25s; }
+    .card:nth-child(6)  { animation-delay: 0.30s; }
+    .card:nth-child(7)  { animation-delay: 0.35s; }
+    .card:nth-child(8)  { animation-delay: 0.40s; }
+    .card:nth-child(9)  { animation-delay: 0.45s; }
+    .card:nth-child(10) { animation-delay: 0.50s; }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+    }
+
+    .card h2, .card h3, .card p { margin-top: 0; }
+    .card h2 { font-size: 16px; line-height: 1.08; }
+    .card h3 { font-size: 13px; line-height: 1.15; }
+    .card p  { line-height: 1.35; }
+    .card small { font-size: 8px; }
+
+    /* ---------- Photo cards ---------- */
+
+    .card--photo {
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #ffffff;
+      isolation: isolate;
+    }
+
+    .card--photo.folder::before {
+      background: rgba(255, 255, 255, 0.22);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    .card--photo .folder-link {
+      color: #181818;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .card--photo .folder-link:hover {
+      background: #ffffff;
+      color: #181818;
+    }
+
+    .card--photo .skill {
+      background: rgba(0, 0, 0, 0.35);
+      color: #ffffff;
+    }
+
+    .card--photo[role="button"]::after {
+      color: #ffffff;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65);
+    }
+
+    .card--photo > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ---------- Interactive cards ---------- */
+
+    .card[role="button"] { cursor: pointer; }
+
+    .card[role="button"]::after {
+      content: "\2197";
+      position: absolute;
+      top: 11px;
+      right: 12px;
+      opacity: 0;
+      font-size: 12px;
+      transition: 0.25s ease;
+    }
+
+    .card[role="button"]:hover::after,
+    .card[role="button"]:focus-visible::after {
+      opacity: 0.65;
+    }
+
+    /* ---------- Spans / colours ---------- */
+
+    .wide  { grid-column: span 2; }
+    .tall  { grid-row: span 2; min-height: 250px; }
+    .large { grid-column: span 2; grid-row: span 2; min-height: 250px; }
+
+    .paper  { background: var(--paper); }
+    .blue   { background: var(--blue); }
+    .yellow { background: var(--yellow); }
+    .red    { color: #ffffff; background: var(--red); }
+    .green  { color: #ffffff; background: var(--green); }
+    .lime   { background: var(--lime); }
+    .pink   { background: var(--pink); }
+    .purple { background: var(--purple); }
+    .navy   { color: #ffffff; background: var(--navy); }
+    .orange { background: var(--orange); }
+
+    /* ---------- Folder cards ---------- */
+
+    .folder {
+      grid-column: span 2;
+      min-height: 152px;
+      padding-top: 48px;
+      background: var(--blue);
+    }
+
+    .folder::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 18px;
+      width: 55px;
+      height: 16px;
+      border-radius: 0 0 7px 7px;
+      background: var(--blue);
+    }
+
+    .folder strong, .folder span, .folder em {
+      display: block;
+      position: relative;
+    }
+
+    .folder strong {
+      display: inline-block;
+      padding: 4px 7px;
+      border-radius: 5px;
+      background: var(--yellow);
+      font-size: 10px;
+      color: #181818;
+    }
+
+    .folder span { margin-top: 10px; font-size: 10px; }
+
+    .folder em {
+      position: absolute;
+      right: 13px;
+      bottom: 12px;
+      font-size: 8px;
+      font-style: normal;
+    }
+
+    .folder-link {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 5px 10px;
+      border-radius: 20px;
+      color: #ffffff;
+      background: #181818;
+      font-size: 9px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .folder-link:hover {
+      background: var(--green);
+      transform: translateY(-2px);
+    }
+
+    /* ---------- About ---------- */
+
+    .about-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .about-card .mark { align-self: flex-end; font-size: 33px; }
+
+    /* ---------- Contact ---------- */
+
+    .contact {
+      grid-column: span 4;
+      min-height: 170px;
+      color: #ffffff;
+      background: var(--green);
+    }
+
+    .contact h2 {
+      max-width: 370px;
+      font-family: "Playfair Display", serif;
+      font-size: 29px;
+      font-weight: 500;
+    }
+
+    .contact a {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 9px 14px;
+      border-radius: 30px;
+      color: #181818;
+      background: var(--lime);
+      font-size: 10px;
+      transition: 0.2s ease;
+    }
+
+    .contact a:hover {
+      color: #181818;
+      background: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    .contact-tools {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .ghost-button {
+      padding: 9px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      border-radius: 30px;
+      color: #ffffff;
+      background: transparent;
+      font-family: inherit;
+      font-size: 10px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .ghost-button:hover {
+      background: rgba(255, 255, 255, 0.16);
+      transform: translateY(-2px);
+    }
+
+    /* ---------- Skills ---------- */
+
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 18px;
+    }
+
+    .skill {
+      padding: 5px 8px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.18);
+      font-size: 9px;
+    }
+
+    .technology-card h2 { max-width: 300px; }
+
+    /* ---------- Detail page ---------- */
+
+    .detail-page {
+      padding: 26px 22px 24px;
+      border-radius: 14px;
+      background: var(--paper);
+      color: #181818;
+      animation: card-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .detail-eyebrow {
+      display: block;
+      margin-bottom: 10px;
+      color: #777777;
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .detail-title {
+      margin: 0 0 8px;
+      font-size: 28px;
+      line-height: 1.1;
+      letter-spacing: -0.4px;
+    }
+
+    .detail-tagline {
+      margin: 0 0 20px;
+      color: #555555;
+      font-family: "Playfair Display", serif;
+      font-size: 17px;
+      font-style: italic;
+      line-height: 1.35;
+    }
+
+    .detail-meta {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 6px 14px;
+      margin: 0 0 22px;
+      padding: 14px 0;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      font-size: 11px;
+    }
+
+    .detail-meta dt {
+      color: #777777;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-size: 9px;
+      padding-top: 1px;
+    }
+
+    .detail-meta dd { margin: 0; }
+
+    .detail-body p {
+      margin: 0 0 12px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .detail-subhead {
+      margin: 22px 0 10px;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #777777;
+      font-weight: 500;
+    }
+
+    .detail-list {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .detail-list li { margin-bottom: 4px; }
+
+    .detail-page .skills { margin-top: 0; }
+
+    .detail-page .skill {
+      background: rgba(0, 0, 0, 0.07);
+      color: #181818;
+    }
+
+    .detail-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-cta {
+      padding: 9px 15px;
+      border-radius: 30px;
+      color: #181818;
+      background: var(--yellow);
+      font-size: 10px;
+      transition: 0.2s ease;
+    }
+
+    .modal-cta:hover {
+      background: var(--lime);
+      transform: translateY(-2px);
+    }
+
+    .modal-secondary {
+      padding: 9px 15px;
+      border: 1px solid rgba(0, 0, 0, 0.18);
+      border-radius: 30px;
+      color: #181818;
+      background: transparent;
+      font-family: inherit;
+      font-size: 10px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .modal-secondary:hover { background: rgba(0, 0, 0, 0.06); }
+
+    /* ---------- Footer ---------- */
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 10px;
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    footer a { color: var(--ink); }
+
+    /* ---------- Toast + back to top ---------- */
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      z-index: 70;
+      padding: 9px 16px;
+      border-radius: 30px;
+      color: #ffffff;
+      background: #181818;
+      font-size: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 14px);
+      transition: 0.3s ease;
+    }
+
+    .toast.is-visible {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .to-top {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 50;
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border: 0;
+      border-radius: 50%;
+      color: #181818;
+      background: var(--yellow);
+      font-size: 15px;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+      transition: 0.25s ease;
+    }
+
+    .to-top.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .to-top:hover {
+      background: #ffffff;
+      transform: translateY(-3px);
+    }
+
+    /* ---------- Responsive ---------- */
+
+    @media (max-width: 600px) {
+      .site { width: min(100% - 18px, 500px); }
+      .portfolio-section { grid-template-columns: repeat(2, 1fr); }
+      .folder, .wide, .contact { grid-column: span 2; }
+      .card h2 { font-size: 14px; }
+      .profile { justify-content: flex-start; }
+      .detail-title { font-size: 22px; }
+      .detail-page { padding: 22px 18px 20px; }
+    }
+
+    @media (max-width: 390px) {
+      .topbar { align-items: flex-start; gap: 15px; }
+      .topbar-actions { flex-wrap: wrap; justify-content: flex-end; }
+      .email {
+        max-width: 150px;
+        text-align: right;
+        overflow-wrap: anywhere;
+      }
+      .profile { align-items: flex-start; }
+      .avatar { width: 60px; height: 60px; font-size: 24px; }
+      .profile-content { font-size: 10px; }
+      .navigation { justify-content: flex-start; }
+      .card { padding: 10px; }
+    }
+
+    /* ---------- Reduced motion ---------- */
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .card {
+        animation: none !important;
+        opacity: 1;
+        transform: none;
+      }
+
+      .card:hover { transform: none; }
+
+      .starfield { display: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas class="starfield" id="starfield" aria-hidden="true"></canvas>
+
+  <main class="site">
+
+    <header class="topbar">
+      <a href="#/" class="brand" data-view="home">dandelion</a>
+
+      <div class="topbar-actions">
+        <a class="email" href="mailto:dandeelion105@hotmail.com">
+          dandeelion105@hotmail.com
+        </a>
+
+        <button
+          class="theme-toggle"
+          id="themeToggle"
+          type="button"
+          aria-label="Switch colour theme"
+          title="Switch colour theme"
+        >
+          ◐
+        </button>
+      </div>
+    </header>
+
+    <section class="profile">
+      <div class="avatar">D</div>
+
+      <div class="profile-content">
+        <h1>Dandelion</h1>
+        <p>Founder, designer and builder.</p>
+        <p class="muted">
+          Short video creator, product designer and independent software developer.
+        </p>
+        <span class="location">♡ Beijing</span>
+      </div>
+    </section>
+
+    <nav class="navigation" id="mainNav" aria-label="Main navigation">
+      <a href="#about" data-anchor="#about">About</a>
+      <a href="#/work" data-view="work">Work</a>
+      <a href="#projects" data-anchor="#projects">Projects</a>
+      <a href="#contact" data-anchor="#contact">Contact</a>
+    </nav>
+
+    <!-- ==================== HOME ==================== -->
+
+    <div id="homeView" class="view">
+
+      <section id="about" class="portfolio-section">
+
+        <div
+          class="card folder card--photo"
+          style="background-image:
+            linear-gradient(180deg, rgba(12, 22, 45, 0.35) 0%, rgba(12, 22, 45, 0.82) 100%),
+            url('https://images.unsplash.com/photo-1550859492-d5da9d8e45f3?auto=format&fit=crop&w=900&q=80');"
+        >
+          <strong>About</strong>
+          <span>Designing products, stories and independent tools.</span>
+          <a class="folder-link" href="#/work" data-view="work">
+            Selected work →
+          </a>
+          <em>Beijing · 2025</em>
+        </div>
+
+        <article class="card paper about-card" data-detail="founder-focus">
+          <h2>Founder building at the intersection of design and technology.</h2>
+          <p>Current focus</p>
+          <div class="mark">◎</div>
+        </article>
+
+        <article class="card red" data-detail="ideas-visible">
+          <h3>Ideas become clearer when they are made visible.</h3>
+          <small>Read more →</small>
+        </article>
+
+      </section>
+
+      <section id="projects" class="portfolio-section">
+
+        <div class="card folder">
+          <strong>Projects</strong>
+          <span>Independent experiments and client work.</span>
+          <em>Open experiments</em>
+        </div>
+
+        <article
+          class="card green wide technology-card card--photo"
+          style="background-image:
+            linear-gradient(180deg, rgba(8, 30, 24, 0.35) 0%, rgba(8, 30, 24, 0.85) 100%),
+            url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=900&q=80');"
+        >
+          <h2>Technology should make creative work feel more possible.</h2>
+
+          <div class="skills">
+            <span class="skill">Typography</span>
+            <span class="skill">FontLab</span>
+            <span class="skill">Glyphs</span>
+            <span class="skill">Python</span>
+            <span class="skill">AI / ML</span>
+            <span class="skill">JavaScript</span>
+            <span class="skill">UI/UX Design</span>
+          </div>
+        </article>
+
+        <article class="card pink" data-detail="client-websites">
+          <h3>Client websites</h3>
+          <p>Fast, expressive and conversion-focused pages.</p>
+        </article>
+
+        <article class="card purple" data-detail="software-experiments">
+          <h3>Software experiments</h3>
+          <p>Small tools built to solve real creative problems.</p>
+        </article>
+
+        <article class="card paper large" data-detail="exploring-now">
+          <h2>What I am exploring now</h2>
+          <p>
+            How AI can support designers without removing judgment, personality
+            or craft from the process.
+          </p>
+          <p>
+            I am especially interested in typography systems, generative
+            interfaces and independent software.
+          </p>
+        </article>
+
+      </section>
+
+      <section id="contact" class="portfolio-section">
+        <article class="card contact">
+          <h2>Have an idea that needs shape?</h2>
+          <p>I am available for selected design, product and web projects.</p>
+
+          <div class="contact-tools">
+            <a href="mailto:dandeelion105@hotmail.com">
+              Start a conversation ↗
+            </a>
+
+            <button class="ghost-button" type="button" id="copyEmail">
+              Copy email
+            </button>
+          </div>
+        </article>
+      </section>
+
+    </div>
+
+    <!-- ==================== WORK ==================== -->
+
+    <div id="workView" class="view" hidden>
+
+      <div class="view-bar">
+        <a class="back-link" href="#/" data-view="home">← Back to home</a>
+        <span class="view-label">Selected work</span>
+      </div>
+
+      <section id="work" class="portfolio-section">
+        <div class="card folder">
+          <strong>Work</strong>
+          <span>Selected work across product, identity and media.</span>
+          <em>Selected work</em>
+        </div>
+
+        <article class="card purple" data-detail="letterform-lab">
+          <span class="project-number">01 / Product design</span>
+          <h2 class="project-title">Letterform Lab</h2>
+          <p>A creative workspace for exploring type, script and visual language.</p>
+        </article>
+
+        <article class="card pink large" data-detail="research-identity">
+          <h3>Research, identity and product direction</h3>
+          <p>A methodical approach to brand and product work.</p>
+        </article>
+
+        <article class="card lime" data-detail="workflow-weaver">
+          <span class="project-number">02 / AI tools</span>
+          <h2 class="project-title">Workflow Weaver</h2>
+          <p>AI-assisted workflows for turning ideas into working web pages.</p>
+        </article>
+
+        <article class="card paper" data-detail="product-systems">
+          <h3>Product systems</h3>
+          <p>Flows, components and reusable design patterns.</p>
+        </article>
+
+        <article class="card yellow" data-detail="ink-tone">
+          <span class="project-number">03 / Editorial</span>
+          <h2 class="project-title">Ink &amp; Tone</h2>
+          <p>Exploring the relationship between typography, voice and culture.</p>
+        </article>
+
+        <article class="card navy large" data-detail="pixel-flow">
+          <span class="project-number">04 / Interface</span>
+          <h2 class="project-title">Pixel Flow</h2>
+          <p>Visual tools for shaping digital products with clarity and speed.</p>
+        </article>
+
+        <article class="card orange" data-detail="made-with-curiosity">
+          <h3>Made with curiosity.</h3>
+          <p>Designing, prototyping, testing and learning in public.</p>
+        </article>
+      </section>
+
+    </div>
+
+    <!-- ==================== DETAIL ==================== -->
+
+    <div id="detailView" class="view" hidden>
+
+      <div class="view-bar">
+        <a class="back-link" id="detailBack" href="#/">← Back</a>
+        <span class="view-label" id="detailBackLabel">Detail</span>
+      </div>
+
+      <article class="detail-page">
+        <span class="detail-eyebrow" id="detailEyebrow"></span>
+        <h1 class="detail-title" id="detailTitle"></h1>
+        <p class="detail-tagline" id="detailTagline"></p>
+
+        <dl class="detail-meta" id="detailMeta"></dl>
+
+        <div class="detail-body" id="detailBody"></div>
+
+        <div id="detailHighlights"></div>
+        <div id="detailSkills"></div>
+
+        <div class="detail-actions">
+          <a class="modal-cta" id="detailCta" href="mailto:dandeelion105@hotmail.com">
+            Ask about this ↗
+          </a>
+          <a class="modal-secondary" id="detailBackBtn" href="#/">Close</a>
+        </div>
+      </article>
+
+    </div>
+
+    <footer>
+      <span>© <span id="year"></span> Dandelion</span>
+      <a href="mailto:dandeelion105@hotmail.com">Email me ↗</a>
+    </footer>
+
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <button class="to-top" id="toTop" type="button" aria-label="Back to top">↑</button>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var EMAIL = "dandeelion105@hotmail.com";
+      var reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      /* ============================================================
+         1. DETAIL DATA
+      ============================================================ */
+
+      var DETAILS = {
+        "founder-focus": {
+          source: "home",
+          eyebrow: "About",
+          title: "Founder building at the intersection of design and technology.",
+          tagline: "Current focus",
+          meta: [
+            { label: "Based", value: "Beijing" },
+            { label: "Working since", value: "2016" },
+            { label: "Availability", value: "Selected projects" }
+          ],
+          body: [
+            "I run a small independent studio where I design and build digital products — usually on my own, sometimes with a couple of collaborators.",
+            "The work sits between three things I care about: design that has a point of view, software that respects the people using it, and stories that are worth telling."
+          ],
+          highlights: [
+            "Independent studio, small by choice",
+            "Design + code in the same hand",
+            "Working with teams anywhere, from Beijing"
+          ],
+          skills: ["Product design", "Front-end engineering", "Typography", "Writing"]
+        },
+
+        "ideas-visible": {
+          source: "home",
+          eyebrow: "About",
+          title: "Ideas become clearer when they are made visible.",
+          tagline: "Read more",
+          meta: [
+            { label: "Type", value: "Note" },
+            { label: "Status", value: "Ongoing" }
+          ],
+          body: [
+            "A sketch on the back of a receipt will do more for a project than a month of abstract discussion. The act of making something visible changes what you are arguing about.",
+            "So most of my process is about getting to something visible quickly — a screen, a prototype, a paragraph — and then improving it in public."
+          ],
+          highlights: [
+            "Sketch first, spec later",
+            "Prototype at the fidelity of the question",
+            "Show work before it is finished"
+          ],
+          skills: ["Prototyping", "Sketching", "Facilitation", "Writing"]
+        },
+
+        "client-websites": {
+          source: "home",
+          eyebrow: "Projects · Client work",
+          title: "Client websites",
+          tagline: "Fast, expressive and conversion-focused pages.",
+          meta: [
+            { label: "Type", value: "Client work" },
+            { label: "Typical scope", value: "2–6 weeks" },
+            { label: "Deliverable", value: "Design + build" }
+          ],
+          body: [
+            "I design and build custom websites for studios, founders and small teams who want something that feels hand-made rather than template-generated.",
+            "Every project starts with the story — what the site needs to say, and who needs to hear it. Layout, type and motion are chosen to serve that story, not to follow a trend."
+          ],
+          highlights: [
+            "Design and build in one pass",
+            "Performance budget under 100KB of JS",
+            "Custom type and layout systems",
+            "Editor-friendly CMS when needed"
+          ],
+          skills: ["Web design", "React", "Tailwind CSS", "Motion"]
+        },
+
+        "software-experiments": {
+          source: "home",
+          eyebrow: "Projects · Independent",
+          title: "Software experiments",
+          tagline: "Small tools built to solve real creative problems.",
+          meta: [
+            { label: "Type", value: "Independent" },
+            { label: "Cadence", value: "1–2 per quarter" },
+            { label: "Released", value: "Ongoing" }
+          ],
+          body: [
+            "Alongside client work I build small, focused software — usually because an existing tool almost does what I need, but not quite.",
+            "These experiments rarely start with a business plan. They start with a frustration, a sketch, and a weekend of prototyping."
+          ],
+          highlights: [
+            "Prototype-first approach",
+            "Tools for type, layout and image work",
+            "Learning in public via short write-ups"
+          ],
+          skills: ["Python", "JavaScript", "Figma", "Prototyping"]
+        },
+
+        "exploring-now": {
+          source: "home",
+          eyebrow: "Projects · Research",
+          title: "What I am exploring now",
+          tagline: "How AI can support designers without removing judgment, personality or craft.",
+          meta: [
+            { label: "Status", value: "Ongoing" },
+            { label: "Notes", value: "Occasional essays" }
+          ],
+          body: [
+            "Right now I am most interested in the space between generative tools and the craft of design — where AI accelerates the boring parts without flattening the interesting ones.",
+            "Concretely: typography systems that adapt to context, interfaces that read and respond to what a user is actually trying to do, and small software that quietly gets out of the way."
+          ],
+          highlights: [
+            "Generative interfaces that stay legible",
+            "Type systems that respond to content",
+            "AI as a collaborator, not an autopilot"
+          ],
+          skills: ["AI / ML", "Typography", "Interface design", "Research"]
+        },
+
+        "letterform-lab": {
+          source: "work",
+          eyebrow: "01 / Product design",
+          title: "Letterform Lab",
+          tagline: "A creative workspace for exploring type, script and visual language.",
+          meta: [
+            { label: "Role", value: "Designer & developer" },
+            { label: "Year", value: "2024" },
+            { label: "Status", value: "Beta" }
+          ],
+          body: [
+            "Letterform Lab is a browser-based workspace for designers who want to sketch with type, not just apply it. It treats letters as materials you can move, stack and reshape.",
+            "The project began as a personal tool for exploring the space between Latin and Chinese letterforms — two systems with very different ideas about what a character is."
+          ],
+          highlights: [
+            "Live canvas for type composition",
+            "Latin + CJK side-by-side",
+            "Export to SVG and PNG",
+            "Scripted variations via a small DSL"
+          ],
+          skills: ["Typography", "Canvas", "TypeScript", "Product design"]
+        },
+
+        "research-identity": {
+          source: "work",
+          eyebrow: "Research",
+          title: "Research, identity and product direction",
+          tagline: "A methodical approach to brand and product work.",
+          meta: [
+            { label: "Type", value: "Client work" },
+            { label: "Output", value: "Direction + identity" },
+            { label: "Scope", value: "3–8 weeks" }
+          ],
+          body: [
+            "Before any visual decision, I look at what the product or brand is actually trying to do — who it is for, what it competes with, and what it is willing to give up.",
+            "That research usually ends up as a short document: a direction, a few principles, and enough evidence that the team can argue with it."
+          ],
+          highlights: [
+            "Interviews and competitor teardown",
+            "One-page direction documents",
+            "Identity systems that scale from app to print"
+          ],
+          skills: ["Research", "Brand strategy", "Identity design", "Writing"]
+        },
+
+        "workflow-weaver": {
+          source: "work",
+          eyebrow: "02 / AI tools",
+          title: "Workflow Weaver",
+          tagline: "AI-assisted workflows for turning ideas into working web pages.",
+          meta: [
+            { label: "Role", value: "Designer & developer" },
+            { label: "Year", value: "2025" },
+            { label: "Status", value: "Prototype" }
+          ],
+          body: [
+            "Workflow Weaver takes a rough brief and produces a first draft of a working page — not to replace the designer, but to skip the empty-canvas moment.",
+            "The tool is opinionated: it asks for structure before it asks for style, and it shows its reasoning so you can push back on it."
+          ],
+          highlights: [
+            "Structured brief → working page",
+            "Editable intermediate steps",
+            "Built on top of an open component system"
+          ],
+          skills: ["LLM tooling", "React", "Prompt design", "Product design"]
+        },
+
+        "product-systems": {
+          source: "work",
+          eyebrow: "02 / Product design",
+          title: "Product systems",
+          tagline: "Flows, components and reusable design patterns.",
+          meta: [
+            { label: "Type", value: "Client & internal" },
+            { label: "Scope", value: "3–8 weeks" },
+            { label: "Output", value: "System + docs" }
+          ],
+          body: [
+            "Product systems work is the unglamorous, high-leverage part of design: getting the pieces to agree with each other so the team can stop re-deciding the same things.",
+            "I usually start by mapping the actual flows people use, then finding the smallest set of components that covers them."
+          ],
+          highlights: [
+            "Flow mapping before component design",
+            "Tokens that survive a rebrand",
+            "Documentation that engineers actually read"
+          ],
+          skills: ["Design systems", "Component design", "Documentation", "Figma"]
+        },
+
+        "ink-tone": {
+          source: "work",
+          eyebrow: "03 / Editorial",
+          title: "Ink & Tone",
+          tagline: "Exploring the relationship between typography, voice and culture.",
+          meta: [
+            { label: "Role", value: "Editor & designer" },
+            { label: "Issues", value: "3 to date" },
+            { label: "Status", value: "Ongoing" }
+          ],
+          body: [
+            "Ink & Tone is an ongoing editorial project about how type carries voice — how a typeface can sound polite, loud, careful or amused before you read a single word.",
+            "Each issue pairs a short essay with a set of type specimens, letting the reader see the argument as well as read it."
+          ],
+          highlights: [
+            "Essays + specimens in one format",
+            "Latin and Chinese type pairings",
+            "Risograph-printed limited runs"
+          ],
+          skills: ["Typography", "Editorial design", "Writing", "Print"]
+        },
+
+        "pixel-flow": {
+          source: "work",
+          eyebrow: "04 / Interface",
+          title: "Pixel Flow",
+          tagline: "Visual tools for shaping digital products with clarity and speed.",
+          meta: [
+            { label: "Role", value: "Designer" },
+            { label: "Year", value: "2024" },
+            { label: "Status", value: "Released" }
+          ],
+          body: [
+            "Pixel Flow is a set of interface patterns and small tools for teams who need to move fast without producing generic work.",
+            "The project focuses on the middle layer of product design — the flows, states and edge cases that decide whether an interface feels considered or accidental."
+          ],
+          highlights: [
+            "Reusable flow patterns",
+            "State-first component library",
+            "Documentation written for designers and engineers"
+          ],
+          skills: ["Interface design", "Design systems", "Figma", "Documentation"]
+        },
+
+        "made-with-curiosity": {
+          source: "work",
+          eyebrow: "Personal",
+          title: "Made with curiosity.",
+          tagline: "Designing, prototyping, testing and learning in public.",
+          meta: [
+            { label: "Type", value: "Personal" },
+            { label: "Cadence", value: "Weekly" },
+            { label: "Output", value: "Prototypes + notes" }
+          ],
+          body: [
+            "Most of what I know came from building things that didn't need to exist and then showing them to people.",
+            "This page is where those experiments live — half-finished, occasionally wrong, and usually the most useful thing I made that month."
+          ],
+          highlights: [
+            "Weekly prototypes",
+            "Public write-ups of what broke",
+            "Open source when it makes sense"
+          ],
+          skills: ["Prototyping", "Writing", "Front-end", "Product thinking"]
+        }
+      };
+
+      /* ============================================================
+         2. DOM REFS
+      ============================================================ */
+
+      var homeView    = document.getElementById("homeView");
+      var workView    = document.getElementById("workView");
+      var detailView  = document.getElementById("detailView");
+
+      var navigation  = document.getElementById("mainNav");
+      var navLinks    = navigation.querySelectorAll("a");
+      var toTop       = document.getElementById("toTop");
+
+      var detailBack       = document.getElementById("detailBack");
+      var detailBackBtn    = document.getElementById("detailBackBtn");
+      var detailBackLabel  = document.getElementById("detailBackLabel");
+      var detailEyebrow    = document.getElementById("detailEyebrow");
+      var detailTitle      = document.getElementById("detailTitle");
+      var detailTagline    = document.getElementById("detailTagline");
+      var detailMeta       = document.getElementById("detailMeta");
+      var detailBody       = document.getElementById("detailBody");
+      var detailHighlights = document.getElementById("detailHighlights");
+      var detailSkills     = document.getElementById("detailSkills");
+      var detailCta        = document.getElementById("detailCta");
+
+      var currentDetailId = null;
+
+      /* ============================================================
+         3. STARFIELD
+      ============================================================ */
+
+      (function initStarfield() {
+        var canvas = document.getElementById("starfield");
+        if (!canvas) return;
+
+        if (reduceMotion) return;
+
+        var ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        var w = 0;
+        var h = 0;
+
+        var COUNT = Math.max(
+          150,
+          Math.min(320, Math.floor(window.innerWidth / 5))
+        );
+
+        var particles = [];
+        var running = false;
+        var rafId = null;
+
+        var mouse = { x: -9999, y: -9999, active: false };
+
+        var MOUSE_RADIUS = 120;
+        var MOUSE_RADIUS_SQ = MOUSE_RADIUS * MOUSE_RADIUS;
+
+        function getColorString() {
+          var theme = document.documentElement.getAttribute("data-theme");
+          return theme === "dark" ? "243, 238, 220" : "70, 80, 105";
+        }
+
+        function resize() {
+          w = window.innerWidth;
+          h = window.innerHeight;
+
+          canvas.width = Math.floor(w * dpr);
+          canvas.height = Math.floor(h * dpr);
+          canvas.style.width = w + "px";
+          canvas.style.height = h + "px";
+
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        function createParticles() {
+          particles.length = 0;
+
+          for (var i = 0; i < COUNT; i++) {
+            particles.push({
+              x: Math.random() * w,
+              y: Math.random() * h,
+              vx: (Math.random() - 0.5) * 0.12,
+              vy: (Math.random() - 0.5) * 0.12,
+              r: Math.random() * 1.4 + 0.35,
+              baseAlpha: Math.random() * 0.35 + 0.22,
+              phase: Math.random() * Math.PI * 2,
+              twinkleSpeed: Math.random() * 0.0012 + 0.0005
+            });
+          }
+        }
+
+        var startTime = performance.now();
+
+        function tick(now) {
+          var elapsed = now - startTime;
+          var color = getColorString();
+
+          ctx.clearRect(0, 0, w, h);
+
+          for (var i = 0; i < particles.length; i++) {
+            var p = particles[i];
+
+            p.x += p.vx;
+            p.y += p.vy;
+
+            if (mouse.active) {
+              var dx = p.x - mouse.x;
+              var dy = p.y - mouse.y;
+              var distSq = dx * dx + dy * dy;
+
+              if (distSq < MOUSE_RADIUS_SQ && distSq > 0.5) {
+                var dist = Math.sqrt(distSq);
+                var falloff = 1 - dist / MOUSE_RADIUS;
+                var force = falloff * falloff * 0.7;
+                p.x += (dx / dist) * force;
+                p.y += (dy / dist) * force;
+              }
+            }
+
+            if (p.x < -12) p.x = w + 12;
+            else if (p.x > w + 12) p.x = -12;
+
+            if (p.y < -12) p.y = h + 12;
+            else if (p.y > h + 12) p.y = -12;
+
+            var twinkle =
+              0.7 + 0.3 * Math.sin(elapsed * p.twinkleSpeed + p.phase);
+            var alpha = p.baseAlpha * twinkle;
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle =
+              "rgba(" + color + "," + alpha.toFixed(3) + ")";
+            ctx.fill();
+          }
+
+          rafId = window.requestAnimationFrame(tick);
+        }
+
+        function start() {
+          if (running) return;
+          running = true;
+          rafId = window.requestAnimationFrame(tick);
+        }
+
+        function stop() {
+          if (!running) return;
+          running = false;
+          if (rafId != null) {
+            window.cancelAnimationFrame(rafId);
+            rafId = null;
+          }
+        }
+
+        window.addEventListener(
+          "pointermove",
+          function (event) {
+            mouse.x = event.clientX;
+            mouse.y = event.clientY;
+            mouse.active = true;
+          },
+          { passive: true }
+        );
+
+        window.addEventListener("pointerleave", function () {
+          mouse.active = false;
+        });
+
+        var resizeTimer = null;
+        window.addEventListener("resize", function () {
+          if (resizeTimer) window.clearTimeout(resizeTimer);
+          resizeTimer = window.setTimeout(function () {
+            resize();
+            createParticles();
+          }, 150);
+        });
+
+        document.addEventListener("visibilitychange", function () {
+          if (document.hidden) stop();
+          else start();
+        });
+
+        resize();
+        createParticles();
+        start();
+      })();
+
+      /* ============================================================
+         4. TOAST
+      ============================================================ */
+
+      var toast = document.getElementById("toast");
+      var toastTimer = null;
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("is-visible");
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(function () {
+          toast.classList.remove("is-visible");
+        }, 1900);
+      }
+
+      /* ============================================================
+         5. THEME
+      ============================================================ */
+
+      var themeToggle = document.getElementById("themeToggle");
+
+      function applyTheme(theme) {
+        document.documentElement.setAttribute("data-theme", theme);
+        themeToggle.textContent = theme === "dark" ? "☀" : "◐";
+        try {
+          localStorage.setItem("dandelion-theme", theme);
+        } catch (error) {}
+      }
+
+      themeToggle.addEventListener("click", function () {
+        var next =
+          document.documentElement.getAttribute("data-theme") === "dark"
+            ? "light"
+            : "dark";
+        applyTheme(next);
+        showToast(next === "dark" ? "Dark theme on" : "Light theme on");
+      });
+
+      applyTheme(
+        document.documentElement.getAttribute("data-theme") === "dark"
+          ? "dark"
+          : "light"
+      );
+
+      /* ============================================================
+         6. ROUTER
+      ============================================================ */
+
+      function parseRoute() {
+        var hash = window.location.hash || "";
+
+        if (hash.indexOf("#/detail/") === 0) {
+          return { view: "detail", id: decodeURIComponent(hash.slice(9)) };
+        }
+        if (hash === "#/work") return { view: "work" };
+        if (hash === "" || hash === "#" || hash === "#/") return { view: "home" };
+        if (hash.charAt(0) === "#") return { view: "home", anchor: hash };
+        return { view: "home" };
+      }
+
+      function scrollToAnchor(anchor) {
+        var target = document.querySelector(anchor);
+        if (!target) return;
+
+        var top = target.getBoundingClientRect().top + window.scrollY - 56;
+
+        window.scrollTo({
+          top: top,
+          behavior: reduceMotion ? "auto" : "smooth"
+        });
+      }
+
+      function renderRoute() {
+        var route = parseRoute();
+
+        homeView.hidden = true;
+        workView.hidden = true;
+        detailView.hidden = true;
+
+        if (route.view === "detail") {
+          renderDetail(route.id);
+          detailView.hidden = false;
+          window.scrollTo({ top: 0, behavior: "auto" });
+        } else if (route.view === "work") {
+          workView.hidden = false;
+          window.scrollTo({ top: 0, behavior: "auto" });
+        } else {
+          homeView.hidden = false;
+
+          if (route.anchor) {
+            window.requestAnimationFrame(function () {
+              scrollToAnchor(route.anchor);
+            });
+          } else {
+            window.scrollTo({ top: 0, behavior: "auto" });
+          }
+        }
+
+        markActiveNavigation();
+      }
+
+      window.addEventListener("hashchange", renderRoute);
+
+      /* ============================================================
+         7. DETAIL RENDERER
+      ============================================================ */
+
+      function textOrEmpty(value) {
+        return value == null ? "" : String(value);
+      }
+
+      function renderDetail(id) {
+        currentDetailId = id;
+        var data = DETAILS[id];
+
+        if (!data) {
+          detailEyebrow.textContent = "Not found";
+          detailTitle.textContent = "We couldn't find that page";
+          detailTagline.textContent = "";
+          detailTagline.hidden = true;
+          detailMeta.innerHTML = "";
+          detailMeta.hidden = true;
+          detailBody.innerHTML =
+            "<p>The item you're looking for may have moved. Head back and try again.</p>";
+          detailHighlights.innerHTML = "";
+          detailSkills.innerHTML = "";
+
+          detailBack.setAttribute("href", "#/");
+          detailBack.textContent = "← Back";
+          detailBackBtn.setAttribute("href", "#/");
+          detailBackLabel.textContent = "Detail";
+          return;
+        }
+
+        var backHash = data.source === "work" ? "#/work" : "#/";
+        var backWord = data.source === "work" ? "Selected work" : "Home";
+
+        detailEyebrow.textContent  = textOrEmpty(data.eyebrow);
+        detailTitle.textContent    = textOrEmpty(data.title);
+        detailTagline.textContent  = textOrEmpty(data.tagline);
+        detailTagline.hidden       = !data.tagline;
+
+        detailMeta.innerHTML = "";
+        if (data.meta && data.meta.length) {
+          detailMeta.hidden = false;
+          data.meta.forEach(function (item) {
+            var dt = document.createElement("dt");
+            dt.textContent = item.label;
+            var dd = document.createElement("dd");
+            dd.textContent = item.value;
+            detailMeta.appendChild(dt);
+            detailMeta.appendChild(dd);
+          });
+        } else {
+          detailMeta.hidden = true;
+        }
+
+        detailBody.innerHTML = "";
+        (data.body || []).forEach(function (paragraph) {
+          var p = document.createElement("p");
+          p.textContent = paragraph;
+          detailBody.appendChild(p);
+        });
+
+        detailHighlights.innerHTML = "";
+        if (data.highlights && data.highlights.length) {
+          var h2 = document.createElement("h2");
+          h2.className = "detail-subhead";
+          h2.textContent = "Highlights";
+          detailHighlights.appendChild(h2);
+
+          var ul = document.createElement("ul");
+          ul.className = "detail-list";
+
+          data.highlights.forEach(function (item) {
+            var li = document.createElement("li");
+            li.textContent = item;
+            ul.appendChild(li);
+          });
+
+          detailHighlights.appendChild(ul);
+        }
+
+        detailSkills.innerHTML = "";
+        if (data.skills && data.skills.length) {
+          var h3 = document.createElement("h2");
+          h3.className = "detail-subhead";
+          h3.textContent = "Focus areas";
+          detailSkills.appendChild(h3);
+
+          var wrap = document.createElement("div");
+          wrap.className = "skills";
+
+          data.skills.forEach(function (skill) {
+            var span = document.createElement("span");
+            span.className = "skill";
+            span.textContent = skill;
+            wrap.appendChild(span);
+          });
+
+          detailSkills.appendChild(wrap);
+        }
+
+        detailBack.setAttribute("href", backHash);
+        detailBack.textContent = "← Back to " + backWord.toLowerCase();
+        detailBackBtn.setAttribute("href", backHash);
+        detailBackLabel.textContent = backWord;
+
+        detailCta.href =
+          "mailto:" + EMAIL +
+          "?subject=" + encodeURIComponent("About " + data.title);
+      }
+
+      /* ============================================================
+         8. NAVIGATION ACTIVE STATE
+      ============================================================ */
+
+      function markActiveNavigation() {
+        var onWork   = !workView.hidden;
+        var onDetail = !detailView.hidden;
+
+        if (onWork || onDetail) {
+          var detailSource = onDetail && currentDetailId
+            ? (DETAILS[currentDetailId] || {}).source
+            : null;
+
+          var highlightWork = onWork || detailSource === "work";
+
+          navLinks.forEach(function (link) {
+            link.classList.toggle(
+              "active",
+              highlightWork && link.getAttribute("data-view") === "work"
+            );
+          });
+          return;
+        }
+
+        var homeSections = document.querySelectorAll("#homeView section[id]");
+        var currentSection = "";
+
+        homeSections.forEach(function (section) {
+          if (window.scrollY >= section.offsetTop - 160) {
+            currentSection = section.getAttribute("id");
+          }
+        });
+
+        navLinks.forEach(function (link) {
+          var anchor = link.getAttribute("data-anchor");
+          link.classList.toggle("active", anchor === "#" + currentSection);
+        });
+      }
+
+      /* ============================================================
+         9. NAV CLICKS
+      ============================================================ */
+
+      document.querySelectorAll("[data-view]").forEach(function (element) {
+        element.addEventListener("click", function (event) {
+          event.preventDefault();
+
+          var target = element.getAttribute("data-view");
+          var targetHash = target === "work" ? "#/work" : "#/";
+
+          if (window.location.hash === targetHash) {
+            window.scrollTo({
+              top: 0,
+              behavior: reduceMotion ? "auto" : "smooth"
+            });
+          } else {
+            window.location.hash = targetHash;
+          }
+        });
+      });
+
+      navLinks.forEach(function (link) {
+        var anchor = link.getAttribute("data-anchor");
+        if (!anchor) return;
+
+        link.addEventListener("click", function (event) {
+          if (!homeView.hidden) return;
+
+          event.preventDefault();
+          window.location.hash = "#/";
+
+          window.requestAnimationFrame(function () {
+            window.requestAnimationFrame(function () {
+              scrollToAnchor(anchor);
+            });
+          });
+        });
+      });
+
+      /* ============================================================
+         10. CARD CLICKS → DETAIL
+      ============================================================ */
+
+      document.querySelectorAll("[data-detail]").forEach(function (card) {
+        card.setAttribute("role", "button");
+        card.setAttribute("tabindex", "0");
+
+        function navigate() {
+          var id = card.getAttribute("data-detail");
+          var targetHash = "#/detail/" + encodeURIComponent(id);
+
+          if (window.location.hash === targetHash) {
+            window.scrollTo({ top: 0, behavior: "auto" });
+          } else {
+            window.location.hash = targetHash;
+          }
+        }
+
+        card.addEventListener("click", function (event) {
+          if (event.target.closest("a")) return;
+          navigate();
+        });
+
+        card.addEventListener("keydown", function (event) {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            navigate();
+          }
+        });
+      });
+
+      /* ============================================================
+         11. SCROLL BEHAVIOUR
+      ============================================================ */
+
+      var ticking = false;
+
+      function onScroll() {
+        markActiveNavigation();
+        navigation.classList.toggle("is-stuck", window.scrollY > 40);
+        toTop.classList.toggle("is-visible", window.scrollY > 320);
+      }
+
+      window.addEventListener("scroll", function () {
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(function () {
+          onScroll();
+          ticking = false;
+        });
+      });
+
+      toTop.addEventListener("click", function () {
+        window.scrollTo({
+          top: 0,
+          behavior: reduceMotion ? "auto" : "smooth"
+        });
+      });
+
+      /* ============================================================
+         12. COPY EMAIL
+      ============================================================ */
+
+      function fallbackCopy() {
+        var field = document.createElement("textarea");
+        field.value = EMAIL;
+        field.setAttribute("readonly", "");
+        field.style.position = "fixed";
+        field.style.opacity = "0";
+        document.body.appendChild(field);
+        field.select();
+
+        try {
+          document.execCommand("copy");
+          showToast("Email copied");
+        } catch (error) {
+          showToast("Copy failed — " + EMAIL);
+        }
+
+        document.body.removeChild(field);
+      }
+
+      document.getElementById("copyEmail").addEventListener("click", function () {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(EMAIL).then(function () {
+            showToast("Email copied");
+          }, fallbackCopy);
+        } else {
+          fallbackCopy();
+        }
+      });
+
+      /* ============================================================
+         13. BOOT
+      ============================================================ */
+
+      renderRoute();
+      onScroll();
+    })();
+  </script>
+</body>
+</html>
